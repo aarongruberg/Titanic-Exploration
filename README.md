@@ -21,6 +21,7 @@ titanic_df.head()
 
 <p>I split the original dataframe 'titanic_df' into separate dataframes for men and women.  I named them 'mens_df' and 'womens_df'.</p>
 
+``` Python
 %pylab inline
 import seaborn as sns
 
@@ -28,9 +29,11 @@ import seaborn as sns
 ## Create mens_df and womens_df
 mens_df = titanic_df[(titanic_df['Sex'] == 'male')]
 womens_df = titanic_df[(titanic_df['Sex'] == 'female')]
+```
 
 <p>Then I found the age that had the most survivors in male dataframe and the age that had the most survivors in the female dataframe.  I used an if statement to show the combination of age and sex had the highest number of survivors.  24 year old females had the highest number of survivals.</p>
 
+``` Python
 male_age_mode = mens_df.groupby('Age').sum()['Survived'].idxmax()
 sum_male_age = mens_df.groupby('Age').sum()['Survived'].max()
 female_age_mode = womens_df.groupby('Age').sum()['Survived'].idxmax()
@@ -54,6 +57,7 @@ def correlation(x, y):
 ## Replace male with 1 and female with 0
 sex_num = titanic_df.replace(['male', 'female'], [1, 2]) 
 print 'correlation between sex and survival:', correlation(sex_num['Sex'], sex_num['Survived'])
+```
 
 <p>I wrote a function to calculate the correlation between two variables and explored the correlation between a passenger's sex and their survival.  Values of correlation range from -1 to 1.  A value of 1 means that a passengers who were a particular sex also had a high number of survivals.  This is a strong positive correlation.  A value of -1 means that passengers who were a particular sex also had a low number of survivals.  This is a strong negative correlation.</p>
 
@@ -63,10 +67,13 @@ print 'correlation between sex and survival:', correlation(sex_num['Sex'], sex_n
 
 <p>There were a lot of missing values in the age column of the male and female dataframes.  I printed the 5th and 6th rows of the dataframe as an example.  These values appeared in the table as "NaN" which is short for "not a number."</p>
 
+``` Python
 titanic_df.loc[5:6]
+```
 
 <p> I used the pd.isnull() function to only show me the values in the age column that are not equal to a null value such as NaN.  The pd.cut() function was used to split the ages into bins for each age group.  These bins ranged from [-1, 9, 19, 29, ... 89] where each bin of the form [x, y] includes values in the interval (x,y].  For example, [-1, 9] includes the interval from 0 to 9.  Then I used dataframe.groupby() to sum the survivors in each age group for men and women.</p>
 
+``` Python
 ## Exclude NaN values in mens_df
 
 mens_df = mens_df[pd.isnull(mens_df['Age']) != True]
@@ -104,22 +111,28 @@ plt.xlabel('Age Group', fontsize=13)
 plt.ylabel('Survivors', fontsize=13)
 
 plt.show()
+```
 
 <p>Women had more survivors in each age group with the exception of small children.  This could be due to the policy of putting women and children on the life boats instead of men.  There were far less male survivors in each age group with the number of small male child survivors very close to the maximum of male survivors.  Women ages 20-39 made up the majority of female survivors and men ages 0-9, and 20-39 made up the majority of male survivors.  The largest gap between male and female survivors occured in men and women ages 10 through 19 where far more females survived.  I'm not sure what the age cut off for male children on life boats was but the gap in survivors in this age group could be correlated to it.</p>
 
 <p>The mean number of male survivors in each age group was &mu; = 10.33 and the standard deviation was &sigma; = 9.80.  The values for the male's survivals had very little variation.  The mean number of female survivors in each age group was &mu; = 28.14 and the standard deviation was &sigma; = 17.95.  This tells us that more females in each age group survived and these values were more spread out than the males data.</p>
 
+``` Python
 print 'Male data: \n', male_survivors_per_age_group.describe()
 print 'Female data: \n', female_survivors_per_age_group.describe()
+```
 
 ### How many survivors did each cabin section and ticket fare have?
 
 <p>I started by only looking at the cabin sections and encountered two problems.  Of the 891 passenger rows in the dataframe, there were only 204 real values in the cabin number column.  The rest of the rows in the cabin column were NaN.  The second problem was that the cabin values were combinations of letters and strings.  I was only interested in the letters because those showed what section of the ship a passenger was in.  I printed four of the original values in the cabin number column as an example.</p>
 
+``` Python
 titanic_df['Cabin'].loc[10:13]
+```
 
 <p>I used pd.isnull() again to exclude NaN values and grouped the number of survivors in each cabin by their cabin sections.  I made a new column to represent the cabin sections and titled it Cabin_Letter.  I used .str[:1] to only look at the 0th character in each string and grouped the survivors by their cabin letters.</p>
 
+``` Python
 ## Exclude NaN values for Cabin column
 titanic_df = titanic_df[pd.isnull(titanic_df['Cabin']) != True]
 
@@ -145,9 +158,11 @@ plt.ylabel('Survivors', fontsize=13)
 plt.show()
 
 cabin_survivors.describe()
+```
 
 <p>The histogram above shows the number of survivors in each cabin section.  Cabin sections B and C had the most survivors however, there was only a small amount of cabin data to work with.  Cabin sections A, F, G and T had the fewest survivors.  According to https://www.encyclopedia-titanica.org/cabins.html, a lot of the cabins in sections A through E were first class.  The rest of the cabins in sections E, F and G were a mix of second and third class.  Section T was a boat deck section that contained only one person.  If we are just looking at survivors as function of their cabin sections, it appears that most of the survivors were first class.  The standard deviation for the survivors in each section was 14.42 which means that the number of survivors in each cabin was very spread out.</p>
 
+``` Python
 titanic_df['Cabin Section'].value_counts()
 
 ## Replace the letters A-G and T with numbers 1-8 so we can plot them easier
@@ -165,6 +180,7 @@ plt.xlabel('Cabin Section', fontsize=13)
 plt.ylabel('Ticket Fare', fontsize=13)
 
 plt.show()
+```
 
 <p>This plot is similar to the histogram above.  It includes the passenger's ticket fare as a second variable on the y axis and uses the number of survivors in each cabin section as the size of the data points.  The cabin section letters were changed to numbers where section A is 1 and section T is 8.  The smaller circle in the eighth cabin section with a fare around $50 means there were fewer survivors in that section with that ticket fare.  Although it is possible that cabin sections A-E contained a mix of classes, we can tell that most of the survivors had cheaper ticket fares.  Sections B and C had a mix of ticket fares and the remaining sections had only very cheap fares.  There were a small number of survivors with very expensive fares in section B and it is not clear what could have caused this.  Because the data on cabin sections is incomplete, it is difficult to draw conclusions regarding this issue.  There was a large range of ticket fares and it would be interesting to know more about which fares corresponded to first, second or third class and if there were any discounts received.</p>
 
