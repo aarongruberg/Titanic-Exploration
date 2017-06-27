@@ -5,6 +5,7 @@
 
 <p>Once the table printed correctly I began asking questions about the data.</p>
 
+``` Python
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -15,3 +16,4 @@ titanic_df = pd.read_csv(filename)
 
 ## Print first 5 lines of dataframe
 titanic_df.head()
+```
